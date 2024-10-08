@@ -1,0 +1,1005 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Films and actors database",
+    "description": "Testind database options",
+    "version": "0.1.9"
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/actors": {
+      "get": {
+        "tags": [
+          "Actors Request"
+        ],
+        "summary": "Returns all available actors in the system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/actorsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Actor Request"
+        ],
+        "summary": "Create a new actor",
+        "requestBody": {
+          "description": "Actor Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/actors"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          }
+        }
+      }
+    },
+    "/actors/{uuid}": {
+      "get": {
+        "tags": [
+          "Actor Request"
+        ],
+        "summary": "Get actor with given UUID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Actor Request uuid",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/actor"
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          },
+          "404": {
+            "description": "Failed. Film was not found."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Actor Request by UUID",
+        "tags": [
+          "Actor Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Actor Request uuid",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          "400": {
+            "description": "Failed. Misunderstood Request."
+          },
+          "404": {
+            "description": "Failed. Actor was not found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Actors filmography Request"
+        ],
+        "summary": "Add films to an actor's filmography",
+        "description": "Adds a list of films to the actor's filmography by their UUIDs.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Actor UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "List of films to add to the actor's filmography",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "films": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of film UUIDs to add to the actor's filmography"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Films successfully added to the actor's filmography",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Upgrade successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data or film already in filmography",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Film already in actors filmography or invalid data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Actor or film not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Film or Actor not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Actor Request"
+        ],
+        "summary": "Update actor with the given UUID",
+        "description": "Partially update actor's details",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "The UUID of the actor to update",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/actors"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Actor successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/actor"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          },
+          "404": {
+            "description": "Failed. Actor was not found."
+          }
+        }
+      }
+    },
+    "/films": {
+      "get": {
+        "tags": [
+          "Films Request"
+        ],
+        "summary": "Returns all available films in the system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/filmsResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Film Request"
+        ],
+        "summary": "Create a new film",
+        "requestBody": {
+          "description": "Film Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/films"
+              }
+            }
+          }
+        },
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          }
+        }
+      }
+    },
+    "/films/{uuid}": {
+      "get": {
+        "tags": [
+          "Film Request"
+        ],
+        "summary": "Get film with given UUID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Film Request uuid",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/film"
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          },
+          "404": {
+            "description": "Failed. Film was not found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Films cast Request"
+        ],
+        "summary": "Add actors to an films cast",
+        "description": "Adds a list of actors to the films cast by their UUIDs.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Actor UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "List of actors to add to the films cast",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "films": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "List of actors UUIDs to add to the films cast"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "actors successfully added to the films cast",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Upgrade successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid data or actor already in cast",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "actors already in films cast or invalid data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "actor or film not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "actor or film not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Film Request by UUID",
+        "tags": [
+          "Film Request"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Film Request uuid",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          "400": {
+            "description": "Failed. Misunderstood Request."
+          },
+          "404": {
+            "description": "Failed. Film was not found."
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Film Request"
+        ],
+        "summary": "Update film with the given UUID",
+        "description": "Partially update film's details",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "The UUID of the film to update",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/film"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Film successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/film"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          },
+          "404": {
+            "description": "Failed. Film was not found."
+          }
+        }
+      }
+    },
+    "/stuntmen": {
+      "get": {
+        "tags": [
+          "Stuntmen Request"
+        ],
+        "summary": "Returns all available stuntmen in the system",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stuntmenResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Stuntman Request"
+        ],
+        "summary": "Create a new stuntman",
+        "requestBody": {
+          "description": "Stuntman Request Post Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stuntmen"
+              }
+            }
+          }
+        },
+        "produces": "application/json",
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          }
+        }
+      }
+    },
+    "/stuntmen/uuid": {
+      "get": {
+        "tags": [
+          "Stuntman Request"
+        ],
+        "summary": "Get stuntman with given UUID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Stuntman Request UUID",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stuntman"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          },
+          "404": {
+            "description": "Failed. Stuntman was not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Stuntman Request"
+        ],
+        "summary": "Delete Stuntman Request by UUID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Stuntman Request UUID",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          },
+          "400": {
+            "description": "Failed. Misunderstood Request."
+          },
+          "404": {
+            "description": "Failed. Stuntman was not found."
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Stuntman Request"
+        ],
+        "summary": "Create a new stuntman or change stuntman with UUID",
+        "requestBody": {
+          "description": "Stuntman Request Put Object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stuntman"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "Stuntman Request UUID",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stuntman"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          },
+          "404": {
+            "description": "Failed. Stuntman was not found."
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Stuntman Request"
+        ],
+        "summary": "Update stuntman with the given UUID",
+        "description": "Partially update stuntmen details",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "description": "The UUID of the stuntman to update",
+            "schema": {
+              "$ref": "#/components/schemas/uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/stuntman"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Stuntman successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/stuntman"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed. Wrong data."
+          },
+          "404": {
+            "description": "Failed. Stuntman was not found."
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "summary": "Регистрация нового пользователя",
+        "description": "Этот метод регистрирует нового пользователя в системе.",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Логин пользователя",
+                    "example": "newuser"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Пароль пользователя",
+                    "example": "secretpassword"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Электронная почта пользователя",
+                    "example": "user@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Успешная регистрация пользователя",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "description": "Уникальный идентификатор пользователя",
+                      "example": 1
+                    },
+                    "username": {
+                      "type": "string",
+                      "description": "Логин зарегистрированного пользователя",
+                      "example": "newuser"
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "Электронная почта зарегистрированного пользователя",
+                      "example": "user@example.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка валидации данных",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Описание ошибки",
+                      "example": "Validation error: missing required fields"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Метод не поддерживается",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Описание ошибки",
+                      "example": "The method is not allowed for the requested URL."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Пользователь уже существует",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Описание ошибки",
+                      "example": "Such user exists"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "components": {
+    "schemas": {
+      "uuid": {
+        "properties": {
+          "uuid": {
+            "type": "string"
+          }
+        }
+      },
+      "stuntmen": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "actor_id": {
+            "type": "number"
+          }
+        }
+      },
+      "stuntman": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "actor_id": {
+            "type": "number"
+          }
+        }
+      },
+      "stuntmenResponse": {
+        "type": "object",
+        "properties": {
+          "bookRequest": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/stuntman"
+            }
+          }
+        }
+      },
+      "actors": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "actor": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "format": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "filmography": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/film"
+            }
+          }
+        }
+      },
+      "actorsResponse": {
+        "type": "object",
+        "properties": {
+          "bookRequest": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/actor"
+            }
+          }
+        }
+      },
+      "films": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "format": "string"
+          },
+          "release_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "distributed_by": {
+            "type": "string",
+            "format": "string"
+          },
+          "description": {
+            "type": "string",
+            "format": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "length": {
+            "type": "number"
+          }
+        }
+      },
+      "film": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "format": "string"
+          },
+          "release_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "distributed_by": {
+            "type": "string",
+            "format": "string"
+          },
+          "description": {
+            "type": "string",
+            "format": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "length": {
+            "type": "number"
+          },
+          "cast": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/actor"
+            }
+          }
+        }
+      },
+      "filmsResponse": {
+        "type": "object",
+        "properties": {
+          "bookRequest": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/film"
+            }
+          }
+        }
+      }
+    }
+  }
+}
