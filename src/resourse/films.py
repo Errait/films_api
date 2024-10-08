@@ -8,6 +8,7 @@ from src import db
 from src.database.models import Film
 from src.resourse.auth import token_required
 from src.schemas.films import FilmSchema
+from src.services.actor_service import ActorService
 from src.services.film_service import FilmService
 
 # def get_all_films():
@@ -193,24 +194,24 @@ class FilmListApi(Resource):
         if not film:
             return {'message': 'Film not found'}, 400
 
+        try:
+            data = self.film_schema_partial.load(request.json, instance=film, session=db.session)
+        except ValidationError as e:
+            return {'message': str(e)}, 400
+
         actor_json = request.json.get('actors')
+        if actor_json and isinstance(actor_json, list):
+            actors_to_add = []
+            for actor_uuid in actor_json:
+                actor = ActorService.fetch_actor_by_uuid(db.session, uuid)
+                if not actor:
+                    return {'message': f'Actor with UUID {actor_uuid} not found'}, 404
+                if actor not in film.cast:
+                    actors_to_add.append(actor)
+                else:
+                    return {'message': f'Actor "{actor.name}" already in cast'}, 400
+            film.cast.extend(actors_to_add)
 
-        if not actor_json or not isinstance(actor_json, list):
-            return {'message': 'Invalid actors data'}, 400
-
-        actors_to_add = []
-
-        for actor_uuid in actor_json:
-            actor = db.session.query(Film).filter_by(uuid=actor_uuid).first()
-            if not actor:
-                return {'message': f'Actor with UUID {actor_uuid} not found'}, 404
-            if actor not in film.cast:
-                actors_to_add.append(actor.name)
-            else:
-                return {'message': f'Actor "{actor.name}" already in film\'s cast'}, 400
-
-        film.cast.extend(actors_to_add)
-        db.session.add(film)
         db.session.commit()
         return {'message': 'Upgrade successfully'}, 200
 

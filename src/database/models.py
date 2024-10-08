@@ -25,10 +25,6 @@ class Film(db.Model):
     rating = db.Column(db.Float)
     is_released = db.Column(db.Boolean)
 
-    # cast = relationship('Actor',
-    #                     secondary='cast_in_films',
-    #                     back_populates='filmography',)
-
     cast = relationship('Actor',
                         secondary=cast_in_films,
                         lazy=True,
