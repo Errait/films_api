@@ -4,14 +4,7 @@ from unittest.mock import patch
 from src import app
 import http
 
-
-class FakeFilm:
-    title = 'Fake Film'
-    distributed_by = 'Fake'
-    release_date = '2002-01-02'
-    description = 'Fake description'
-    length = 101
-    rating = 8.0
+from tests.fakes_for_test import FakeFilm, FakeActor
 
 
 class TestFilms:
@@ -100,36 +93,37 @@ class TestFilms:
         resp = client.delete(url)
         assert resp.status_code == http.HTTPStatus.NO_CONTENT
 
+    def test_delete_film_with_mock(self):
+        with patch('src.services.film_service.FilmService.fetch_film_by_uuid') as mocked_query, \
+                patch('src.db.session.delete', autospec=True) as mock_session_delete, \
+                patch('src.db.session.commit', autospec=True) as mock_session_commit:
+            mocked_query.return_value = FakeFilm()
+            client = app.test_client()
+            url = f'/films/1'
+            resp = client.delete(url)
+            assert resp.status_code == http.HTTPStatus.NO_CONTENT
 
+            mocked_query.assert_called_once()
+            mock_session_delete.assert_called_once()
+            mock_session_commit.assert_called_once()
 
+    def test_update_film_cast(self):
+        with patch(
+                'src.services.film_service.FilmService.fetch_film_by_uuid'
+        ) as mocked_query_film, \
+                patch(
+                    'src.services.actor_service.ActorService.fetch_actor_by_uuid'
+                ) as mocked_query_actor, \
+                patch('src.db.session.commit', autospec=True) as mock_session_commit:
+            mocked_query_film.return_value = FakeFilm()
+            mocked_query_actor.return_value = FakeActor()
+            data = {
+                'cast': ['actor-uuid-1']
+            }
+            client = app.test_client()
+            url = f'/films/1'
+            resp = client.patch(url, data=json.dumps(data), content_type='application/json')
+            print(f"Response: {resp.json}")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            mock_session_commit.assert_called_once()
+            assert resp.status_code == http.HTTPStatus.OK
