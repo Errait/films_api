@@ -18,3 +18,9 @@ class FakeActor:
     birthday = '2002-01-02'
     is_active = 'false'
     filmography = []
+
+
+class FakeStuntman:
+    name = 'Fake Stuntman',
+    is_active = Trueh
+    actors_id = 2
