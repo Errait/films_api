@@ -21,6 +21,8 @@ class FakeActor:
 
 
 class FakeStuntman:
+    uuid = 'some-valid-uuid'
     name = 'Fake Stuntman',
     is_active = True
-    actors_id = 2
+    actor_id = 2
+

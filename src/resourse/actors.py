@@ -51,8 +51,10 @@ class ActorListApi(Resource):
 
     def delete(self, uuid):
         actor = ActorService.fetch_actor_by_uuid(db.session, uuid)
+
         if not actor:
             return '', 400
+
         db.session.delete(actor)
         db.session.commit()
         return '', 204

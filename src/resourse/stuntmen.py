@@ -55,7 +55,7 @@ class StuntmenApi(Resource):
         stuntman = StuntmanService.fetch_stuntman_by_uuid(db.session, uuid)
 
         if not stuntman:
-            return '', 400
+            return '', 404
 
         db.session.delete(stuntman)
         db.session.commit()
@@ -68,7 +68,8 @@ class StuntmenApi(Resource):
             return '', 404
 
         try:
-            stuntman = self.stuntman_schema.load(request.json, instance=stuntman, session=db.session)
+            stuntman = self.stuntman_schema.load(
+                request.json, instance=stuntman, session=db.session)
         except ValidationError as e:
             return {'message': str(e)}, 400
 

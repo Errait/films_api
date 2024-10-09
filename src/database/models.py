@@ -95,6 +95,10 @@ class Stuntman(db.Model):
     def __repr__(self):
         return f'{self.name}'
 
+    @classmethod
+    def find_stuntman_by_uuid(cls, uuid):
+        return cls.query.filter_by(uuid=uuid).first()
+
 
 class Contacts(db.Model):
     __tablename__ = 'Contacts'
