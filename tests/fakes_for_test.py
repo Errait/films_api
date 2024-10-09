@@ -22,5 +22,5 @@ class FakeActor:
 
 class FakeStuntman:
     name = 'Fake Stuntman',
-    is_active = Trueh
+    is_active = True
     actors_id = 2
