@@ -11,6 +11,8 @@ uuid = "*"
 flask-swagger-ui = "*"
 marshmallow-sqlalchemy = "*"
 pyjwt = "*"
+psycopg2 = "*"
+railway = "*"
 
 [dev-packages]
 pytest = "*"
