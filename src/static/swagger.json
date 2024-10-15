@@ -1,6 +1,6 @@
 {
   "openapi": "3.0.0",
-  "info": {
+  "info":   {
     "title": "Films and actors database",
     "description": "Testind database options",
     "version": "0.1.9"
@@ -826,6 +826,40 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/populate_db": {
+      "post": {
+        "tags": [
+          "Populate DB"
+        ],
+        "summary": "Post new Films",
+        "description": "Populates the database with top films from IMDB.",
+        "requestBody": {
+          "description": "No input required",
+          "required": false
+        },
+        "responses": {
+          "201": {
+            "description": "Database populated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Database was populated with X films"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }

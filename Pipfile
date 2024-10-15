@@ -13,6 +13,9 @@ marshmallow-sqlalchemy = "*"
 pyjwt = "*"
 psycopg2 = "*"
 railway = "*"
+pytz = "*"
+requests = "*"
+bs4 = "*"
 
 [dev-packages]
 pytest = "*"

@@ -1,4 +1,5 @@
 from src.database.models import Film
+from sqlalchemy import text
 
 
 class FilmService:
@@ -11,3 +12,20 @@ class FilmService:
         return cls.fetch_all_films(session).filter_by(
             uuid=uuid
         ).first()
+
+    @staticmethod
+    def bulk_create_films(session, films):
+        print("Checking database connection...")
+        session.execute(text("SELECT 1"))  # Проверка соединения
+        films_to_create = [
+            Film(**film)
+            for film in films
+        ]
+        try:
+            session.bulk_save_objects(films_to_create)
+            session.commit()
+            return len(films_to_create)
+        except Exception as e:
+            session.rollback()
+            print(f'Error saving films: {e}')
+            return 0
