@@ -16,6 +16,8 @@ railway = "*"
 pytz = "*"
 requests = "*"
 bs4 = "*"
+sanic = "*"
+aiopg = "*"
 
 [dev-packages]
 pytest = "*"
